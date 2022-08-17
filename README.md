@@ -129,14 +129,21 @@ This installation script will set everything up:
 
 ## Modifications 
 
-I have made modifications in `~/formation_workspace/src/simulation/example_tmux_scripts/one_drone_gps & ~/formation_workspace/src/simulation/example_tmux_scripts/three_drone_gps` inorder to run it with f550
+I have made modifications in `~/mrs_workspace/src/simulation/example_tmux_scripts/one_drone_gps & ~/mrs_workspace/src/simulation/example_tmux_scripts/three_drone_gps` inorder to run it with f550 uav type.
 
 ##### Step 1
  Copy the required .world files from semfire_gazebo_simulator to the MRS UAV Sytem
- `cp -r low-density-forest-30by30.world ~/formation_workspace/src/simulation/ros_packages/mrs_gazebo_common_resources/worlds`
+ 
+ `cp -r low-density-forest-30by30.world ~/mrs_workspace/src/simulation/ros_packages/mrs_gazebo_common_resources/worlds`
  
 ##### Step 2 
-Create a new pos.yaml file and copy below specifications and save inside ~/formation_workspace/src/simulation/example_tmux_scripts/one_drone_gps
+Create a new pos.yaml file. You can specify the initial position of drone in simulation using --pos_file parameter
+
+```
+cd  ~/mrs_workspace/src/simulation/example_tmux_scripts/one_drone_gps
+nano pos.yaml
+```
+Copy below parameters to the newly created yaml file.
 ```
 uav1:
   id: 1
@@ -144,19 +151,28 @@ uav1:
   y: 1
   z: 1
   heading: 1
-  ```
+ ```
 
-{This specification is used to spawn the UAV Outside of the simulated forest}
+{The Negative value for x is used to spawn the UAV outside of the simulated forest}
 
 ##### Step 3
-Open the session.yaml file from ~/formation_workspace/src/simulation/example_tmux_scripts/one_drone_gps
-`nano session.yaml`
+Open the session.yaml file from your workspace
+```
+cd ~/your_workspace/src/simulation/example_tmux_scripts/one_drone_gps
+nano session.yaml
+```
 
 #### Step 4: Edit the below parameters
-- Change the UAV type to `UAV_TYPE=f550`
-- Change the world simulation to `world_name:=low-density-forest-30by30`
+- Change the UAV type to f550 and edit the UAV_NAME as shown below
+
+`pre_window: export UAV_NAME=uav1; export RUN_TYPE=simulation; export UAV_TYPE=f550; export WORLD_NAME=simulation; export SENSORS="garmin_down"`
+
+- Change the world files. You can choose any .world files, for example
+
+`- waitForRos; roslaunch mrs_simulation simulation.launch world_name:=low-density-forest-30by30 gui:=true`
+
 - Use below command for spawning the uav with required sensor and pos file
-`rosservice call /mrs_drone_spawner/spawn "1 f550 --enable_rangefinder --enable_realsense_front --pos_file `pwd`/pos.yaml"`
+`rosservice call /mrs_drone_spawner/spawn "1 f550 --enable_rangefinder --enable_realsense_front --pos_file `pwd`/pos.yaml" `
 
 #### Run the Simulation
 `./start.sh`
