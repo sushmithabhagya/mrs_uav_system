@@ -1,0 +1,24 @@
+uav1:
+  id: 1
+  x: -10
+  y: 1
+  z: 1
+  heading: 1
+uav2:
+  id: 1
+  x: -15
+  y: 1
+  z: 1
+  heading: 1
+uav3:
+  id: 1
+  x: -20
+  y: 1
+  z: 1
+  heading: 1
+uav4:
+  id: 1
+  x: -25
+  y: 1
+  z: 1
+  heading: 1
