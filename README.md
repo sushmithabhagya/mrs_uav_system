@@ -57,3 +57,109 @@ The `install.sh` script will add the following to your .bashrc:
 source /opt/ros/<ros_version>/setup.bash
 source /usr/share/gazebo/setup.sh
 ```
+
+## UPDATE BY SUSHMITHA BHAGYA (sushmithabhagya27@gmail.com)
+
+# Formation Control with Obstacle Avoidance for Team of Unmanned Aerial Vehicles in Forestry Robotics Applications
+![image1](https://user-images.githubusercontent.com/109359404/183971029-e006f5cd-e4b3-4088-b010-5fbbb5c0e968.png)
+Sushmitha Bhagya Sashi (sushmithabhagya27@gmail.com)
+
+# Unmanned Aerial Vehicle
+
+![UAVF550](https://user-images.githubusercontent.com/109359404/183973699-df7a3ea0-aa6c-4d1b-917a-c2cdda494319.png)
+
+# System properties
+
+- The platform iS built using Robot Operating System (Melodic, Noetic),ROS(2)
+# Installation Steps
+
+##### Step 1 : Set up Gazebo simulation forestry environment
+To install Gazebo, run 
+`curl -sSL http://get.gazebosim.org | sh` in your terminal
+Test your installation by running the command `gazebo` on your terminal to make sure the simulator launches with no errors. If everything is fine, you can then just run CTRL+C in the terminal and proceed to the next step
+
+##### Step 2  : Setting up and using forest models
+`git clone https://bitbucket.org/semfire-isr-uc/semfire_gazebo_simulator.git`
+- From inside the repository, run the following command to copy the Models folder to the .gazebo folder:
+
+`cp -r Models ~/.gazebo`
+
+- add that path to your .bashrc with:
+
+`GAZEBO_MODEL_PATH=~/.gazebo/Models$GAZEBO_MODEL_PATH' >> ~/.bashrc`
+
+#### Step 3 : Automatic Installation of MRS_UAV Package
+
+```
+sudo apt install lsb-core gnupg
+cd /tmp
+echo '
+GIT_PATH=~/git
+mkdir -p $GIT_PATH
+cd $GIT_PATH
+sudo apt -y install git
+git clone https://github.com/ctu-mrs/mrs_uav_system
+cd mrs_uav_system
+git checkout master
+git pull
+./install.sh -g $GIT_PATH
+source ~/.bashrc' > clone.sh && source clone.sh
+```
+
+This installation script will set everything up:
+
+- install https://semfire-core.slite.page/app/docs/gJT6gbaOu_;
+
+- install other dependencies such as git, gitman, etc.;
+
+- clone uav_core, simulation, example_ros_packages into ~/git;
+
+- install more dependencies such as tmux and tmuxinator;
+
+- create ros workspace in ~/mrs_workspace for the uav_core and simulation;
+
+- create a ros workspace in ~/workspace for examples;
+
+- link packages to the workspaces;
+
+- compile the workspaces;
+
+- added configuration lines into your ~/.bashrc.
+
+
+## Modifications 
+
+I have made modifications in `~/formation_workspace/src/simulation/example_tmux_scripts/one_drone_gps & ~/formation_workspace/src/simulation/example_tmux_scripts/three_drone_gps` inorder to run it with f550
+
+##### Step 1
+ Copy the required .world files from semfire_gazebo_simulator to the MRS UAV Sytem
+ `cp -r low-density-forest-30by30.world ~/formation_workspace/src/simulation/ros_packages/mrs_gazebo_common_resources/worlds`
+ 
+##### Step 2 
+Create a new pos.yaml file and copy below specifications and save inside ~/formation_workspace/src/simulation/example_tmux_scripts/one_drone_gps
+```
+uav1:
+  id: 1
+  x: -20 
+  y: 1
+  z: 1
+  heading: 1
+  ```
+
+{This specification is used to spawn the UAV Outside of the simulated forest}
+
+##### Step 3
+Open the session.yaml file from ~/formation_workspace/src/simulation/example_tmux_scripts/one_drone_gps
+`nano session.yaml`
+
+#### Step 4: Edit the below parameters
+- Change the UAV type to `UAV_TYPE=f550`
+- Change the world simulation to `world_name:=low-density-forest-30by30`
+- Use below command for spawning the uav with required sensor and pos file
+`rosservice call /mrs_drone_spawner/spawn "1 f550 --enable_rangefinder --enable_realsense_front --pos_file `pwd`/pos.yaml"`
+
+#### Run the Simulation
+`./start.sh`
+
+#### Same steps can be followed for the simulation of three_drone_gps
+ 
