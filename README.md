@@ -165,7 +165,7 @@ nano session.yaml
 #### Step 4: Edit the below parameters
 - Change the UAV type to f550 and edit the UAV_NAME as shown below
 
-`pre_window: export UAV_NAME=uav1; export RUN_TYPE=simulation; export UAV_TYPE=f550; export WORLD_NAME=simulation; export SENSORS="garmin_down"`
+`pre_window: export UAV_NAME=uav1; export RUN_TYPE=simulation; export UAV_TYPE=f550; export WORLD_NAME=simulation; export SENSORS="garmin_down"
 
 - Change the world files. You can choose any .world files, for example
 
@@ -175,7 +175,44 @@ nano session.yaml
 `rosservice call /mrs_drone_spawner/spawn "1 f550 --enable_rangefinder --enable_realsense_front --pos_file `pwd`/pos.yaml" `
 
 #### Run the Simulation
+
 `./start.sh`
 
-#### Same steps can be followed for the simulation of three_drone_gps
+![image](https://user-images.githubusercontent.com/111078976/190230907-292d1dc0-9470-4769-91e7-bab6efaca5db.png)
+
+
+#### Step 5: Spawning Three drones
+- three_drone_gps is the folder used for spawning three UAVs. Above mentioned steps can be followed for the simulation of three_drone_gps with few additional changes. In the below code of session.yaml file the values for “i” is assigned with 1 to 3 for 3 UAVs and we can spawn upto n UAVs simply by changing the value of n.
+
+`on_project_start: nums=$(shuf -i 1-3 -n 3 | tr '\n' " "); echo "UAV_NUMBERS=($nums)" > /tmp/random_uav_numbers`
+
+- We have to make sure we are launching the status for three uavs, by editing the below step
+```
+ panes:
+        - export UAV_NAME="uav${UAV_NUMBERS[1]}"; waitForSimulation; roslaunch mrs_uav_status status.launch
+        - export UAV_NAME="uav${UAV_NUMBERS[2]}"; waitForSimulation; roslaunch mrs_uav_status status.launch
+        - export UAV_NAME="uav${UAV_NUMBERS[3]}"; waitForSimulation; roslaunch mrs_uav_status status.launch
+ panes:
+        - export UAV_NAME="uav${UAV_NUMBERS[1]}"; waitForOdometry; roslaunch mrs_uav_general core.launch
+        - export UAV_NAME="uav${UAV_NUMBERS[2]}"; waitForOdometry; roslaunch mrs_uav_general core.launch
+        - export UAV_NAME="uav${UAV_NUMBERS[3]}"; waitForOdometry; roslaunch mrs_uav_general core.launch
+```
+- By using a single pos.yaml file, we can position the UAVs anywhere in the simulated forest. Below table shows the pos.yaml configurations to spawn the three UAVS at different x-locations.
+
+| UAV1  | UAV2  | UAV3  |
+|-------|-------|-------|
+| id: 1 | id: 1 | id: 1 |
+| x: -10| x: -15| x: -20|
+| y: 1  | y: 1  | y: 1  |
+| z: 1  | z: 1  | z: 1  |
+
+#### Run the Simulation
+
+`./start.sh`
+
+Three UAVs will be spawned in three different positions and rosservice can be used to give different trajectories here
+
+![image](https://user-images.githubusercontent.com/111078976/190230826-3c57cb0d-556e-479b-9592-661a4d65459a.png)
+
+
  
